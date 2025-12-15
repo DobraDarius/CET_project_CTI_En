@@ -1,0 +1,10 @@
+=================================
+        USB INFORMATION TOOL
+=================================
+Device Name: Kingston USB
+File System: FAT32
+Total Size:  16 GB
+Free Space:   8 GB
+
+Status: Ready
+=================================
