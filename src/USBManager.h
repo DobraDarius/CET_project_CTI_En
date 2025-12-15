@@ -5,15 +5,16 @@
 #include <string>
 
 struct USBDevice {
-    char driveLetter;                // Example: 'E'
-    unsigned long long totalSpaceGB; // Total size in GB
-    unsigned long long freeSpaceGB;  // Free size in GB
+    char driveLetter;                // example drive name E, F, G etc.
+    double totalSpaceGB; // total space in GB
+    double freeSpaceGB;  // available free space in GB
 };
 
 class USBManager {
 public:
-    // Detects all USB devices connected
+    // here it shoult detect all USB devices connected to the system
     std::vector<USBDevice> detectUSBDevices();
+    void listFiles(char driveLetter);
 
 private:
     bool isUSBDrive(char driveLetter);

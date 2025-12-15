@@ -1,6 +1,9 @@
 #include "USBManager.h"
 #include <windows.h>
 #include <iostream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 bool USBManager::isUSBDrive(char driveLetter) {
     std::string path = "";
@@ -21,8 +24,8 @@ USBDevice USBManager::getDriveInfo(char driveLetter) {
     ULARGE_INTEGER freeBytesAvailable, totalBytes, freeBytes;
 
     if (GetDiskFreeSpaceExA(root.c_str(), &freeBytesAvailable, &totalBytes, &freeBytes)) {
-        dev.totalSpaceGB = totalBytes.QuadPart / (1024ULL * 1024ULL * 1024ULL);
-        dev.freeSpaceGB  = freeBytes.QuadPart / (1024ULL * 1024ULL * 1024ULL);
+        dev.totalSpaceGB = totalBytes.QuadPart / (1024.0 * 1024.0 * 1024.0);
+        dev.freeSpaceGB  = freeBytes.QuadPart / (1024.0 * 1024.0 * 1024.0);
     } else {
         dev.totalSpaceGB = 0;
         dev.freeSpaceGB  = 0;
@@ -45,4 +48,23 @@ std::vector<USBDevice> USBManager::detectUSBDevices() {
     }
 
     return usbList;
+}
+
+void USBManager::listFiles(char driveLetter) {
+    std::string path = std::string(1, driveLetter) + ":\\";
+    
+    try {
+        if (fs::exists(path) && fs::is_directory(path)) {
+            std::cout << "Files on " << path << ":\n";
+            for (const auto& entry : fs::directory_iterator(path)) {
+                std::cout << " - " << entry.path().filename().string();
+                if (fs::is_directory(entry.status())) {
+                    std::cout << " [DIR]";
+                }
+                std::cout << "\n";
+            }
+        }
+    } catch (const fs::filesystem_error& e) {
+        std::cout << "Error accessing drive: " << e.what() << "\n";
+    }
 }
